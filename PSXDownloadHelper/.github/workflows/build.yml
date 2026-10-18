@@ -1,0 +1,27 @@
+name: Compilar PSX Helper
+
+on:
+  workflow_dispatch: # Cria um botão para você clicar e iniciar manualmente
+
+jobs:
+  build:
+    runs-on: windows-latest # Projetos .NET antigos precisam do Windows
+
+    steps:
+    - name: Baixar o código
+      uses: actions/checkout@v4
+
+    - name: Configurar o MSBuild (Compilador da Microsoft)
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restaurar pacotes NuGet
+      run: nuget restore PSSDownloadHelper.sln
+
+    - name: Compilar o projeto
+      run: msbuild PSSDownloadHelper.sln /p:Configuration=Release
+
+    - name: Salvar o arquivo pronto (Artifact)
+      uses: actions/upload-artifact@v4
+      with:
+        name: PSX-Helper-Pronto
+        path: '**/bin/Release/'
